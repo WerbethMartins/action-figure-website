@@ -10,6 +10,7 @@ import Produto from './pages/Produto';
 import Carrinho from './pages/Carrinho';
 import Login from './pages/LoginUsuario';
 import PedidoConcluido from './pages/PedidoConcluido';
+import MeusPedidos from './pages/meusPedidos';
 
 import './App.css'
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="/carrinho" element={<Carrinho />} />
             <Route path="/entrar" element={<Login />} />
             <Route path='/pedido-concluido' element={<PedidoConcluido /> } />
+            <Route path='/pedidos' element={<MeusPedidos /> } />
           </Routes>
       </main>
       <footer>

@@ -31,7 +31,7 @@ export async function adicionarProdutoAPI(produto: IProduto): Promise<IProduto> 
 
 // Atualiza quantidade no carrinho
 export async function atualizarQuantidadeCarrinho(id: number, quantidade: number) {
-  const response = await fetch(`http://localhost:3000/carrinho/${id}`,{
+  const response = await fetch(`${API_URL}/carrinho/${id}`,{
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -67,7 +67,7 @@ export async function listarCarrinhoCompleto() {
 // ===== CHECKOUT ===== 
 
 export async function criarPedido(pedido: IPedido){
-  const response = await fetch("http://localhost:3000/pedidos", {
+  const response = await fetch(`${API_URL}/pedidos`, {
     method: "POST",
     headers: {
       "content-type": "application/json"
@@ -93,7 +93,7 @@ export async function limpaCarrinho(){
 
   await Promise.all(
     itens.map((item: any) => {
-      fetch(`http://localhost:3000/carrinho/${item.id}`, {
+      fetch(`${API_URL}/carrinho/${item.id}`, {
         method: "DELETE"
       })
     })
@@ -124,4 +124,15 @@ export async function removerDoCarrinho(id: number): Promise<void> {
   if (!response.ok) {
     throw new Error("Erro ao remover item do carrinho");
   }
+}
+
+// ===== PEDIDOS =====
+export async function listarPedidos(): Promise<IPedido[]> {
+  const response = await fetch(`${API_URL}/pedidos`);
+
+  if(!response.ok){
+    throw new Error("Erro ao listar pedidos");
+  }
+
+  return await response.json();
 }

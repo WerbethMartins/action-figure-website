@@ -111,6 +111,38 @@
       "total": 120,
       "parcelas": 6,
       "valorParcela": 20
+    },
+    {
+      "id": "2845",
+      "data": "2026-02-24T00:24:00.447Z",
+      "itens": [
+        {
+          "id": "1",
+          "produtoId": "1",
+          "quantidade": 1
+        }
+      ],
+      "subTotal": 5000,
+      "desconto": 500,
+      "total": 4500,
+      "parcelas": 6,
+      "valorParcela": 750
+    },
+    {
+      "id": "b404",
+      "data": "2026-02-25T00:24:25.494Z",
+      "itens": [
+        {
+          "id": "1",
+          "produtoId": "1",
+          "quantidade": 1
+        }
+      ],
+      "subTotal": 5000,
+      "desconto": 500,
+      "total": 4500,
+      "parcelas": 6,
+      "valorParcela": 750
     }
   ]
 }
