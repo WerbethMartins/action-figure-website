@@ -2,14 +2,18 @@ import React from "react";
 import type { IProduto } from "../interface/produto-interface";
 import Popup from "./Popup";
 
+import { toggleDestaqueProduto } from "../services/api"; 
+
 // Interface para as props do Card, estendendo IProduto e adicionando funções opcionais para ações
 interface cardProps extends IProduto {
     onAddCarrinho?: (produto: IProduto) => void;
     onRemoveProduto?: (id: number) => void;
     onEditarProduto?: (produto: IProduto) => void;
+
+    destaque?: boolean;
 }
 
-function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProduto, onEditarProduto }: cardProps) {
+function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProduto, onEditarProduto, destaque }: cardProps) {
 
     // Pop-up
     const [popupConfig, setPopupConfig] = React.useState({
@@ -48,10 +52,34 @@ function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProd
         }
     }
 
+    async function handleToggleDestaque() {
+        try {
+            await toggleDestaqueProduto({
+                id,
+                nome,
+                description,
+                price,
+                image,
+                destaque
+            });
+
+            exibirMensagem("Destaque atualizado!", "sucesso");
+
+        } catch {
+            exibirMensagem("Erro ao atualizar destaque", "erro");
+        }
+    }
+
     return (
          <>      
             <div className="card">
                 <div className="card-header">
+                    <button
+                        className="btn-star"
+                        onClick={() => handleToggleDestaque()}
+                    >
+                        {destaque ? "⭐" : "☆"}
+                    </button>
                     <img src={image} />
                 </div>
 

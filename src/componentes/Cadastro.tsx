@@ -58,6 +58,7 @@ function Cadastro() {
             description,
             price: parseFloat(price),
             image: imagem,
+            destaque: false
         };
 
         try {

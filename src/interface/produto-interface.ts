@@ -4,4 +4,5 @@ export interface IProduto {
     nome: String;
     description: string;
     price: number;
+    destaque?: boolean;
 }

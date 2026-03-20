@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState, useRef} from "react";
 
+// Hooks
+import { useProdutos } from "../hooks/useProdutos";
+import { useAuth } from "../context/AuthContext";
+
 // Componenetes
 import Footer from "../componentes/Footer";
 
@@ -11,13 +15,17 @@ import MotionGrafhic from "../assets/img/motion-graphic.png";
 import actionFigure from "../assets/img/action-figure.png";
 import Heart from "../assets/img/Heart.png";
 
-// Imagens Action Figure
-import Inosuke1 from "../assets/img/Inosuke-action-figure.webp";
-
 //Icones 
 import archievement from "../assets/img/achievement.png";
 
 function Home() {
+
+    // Dados do usuário e a função de logout do contexto
+    const { logado, usuario, logout } = useAuth();
+
+
+    // Listar produtos
+    const { produtos } = useProdutos(); 
 
     // Variável de estado para controlar a visibilidade das seções
     const [ isCardsVisible, setIsCardsVisible ] = useState(false);
@@ -112,37 +120,30 @@ function Home() {
         },
     ];
 
-    const actionFigureData = [
-        {
-            id: 1,
-            img: Inosuke1,
-            icon: "bi bi-arrows-move"
-        },
-        {
-            id: 2,
-            img: Inosuke1,
-            icon: "bi bi-arrows-move"
-        },
-        {
-            id: 3,
-            img: Inosuke1,
-            icon: "bi bi-arrows-move"
-        },
-        {
-            id: 4,
-            img: Inosuke1,
-            icon: "bi bi-arrows-move"
-        }
-    ]
+    const produtosDestaque = produtos
+    .filter(p => p.destaque)
+    .slice(0, 4);
 
     return(
         <>
             <section className="home">
                 <header className="header-home">
-                    <Link to={"/entrar"}>
-                        <button 
-                            className="header-home__button"> Login </button>
-                    </Link>
+                    {/* Lógica condicional do Header*/}
+                    {logado ? (
+                        <div className="user-info-header">
+                            <span className="welcome-text">Olá, {usuario?.nome}</span>
+                            <button 
+                                onClick={logout}
+                                className="header-home__button logout"
+                            > 
+                                Sair 
+                            </button>
+                        </div>
+                    ) : (
+                        <Link to={"/entrar"}>
+                            <button className="header-home__button"> Login </button>
+                        </Link>
+                    )}
                 </header>
                 <div  ref={firstSectionRef} className="home__initial-section">
                     <div className="initial-section__title">
@@ -188,18 +189,18 @@ function Home() {
                 )}
 
                 <div ref={exampleSectionRef} className={`most-purchased-section ${isProductExampleVisible ? 'visible' : 'hidden'}`}>
-                    <h2 className={`most-purchased-title ${isTitleVisible}`}>Actions mais vendidos</h2>
+                    <h2 className={`most-purchased-title ${isTitleVisible}`}>Actions em Destaque</h2>
                     <div className="most-purchased-section__container">
-                        {actionFigureData.map((cards) => (
-                            <div key={cards.id} className="most-purchased-cards">
+                        {produtosDestaque.map((p) => (
+                            <div key={p.id} className="most-purchased-cards">
                                 {/* Ícone com link e tooltip (Remover o link quebra o css)*/}
                                 <a className="most-purchased__icon">
                                     <Link to={"/produtos"}>
-                                        <i className={cards.icon} />
+                                        <i className="bi bi-star-fill" />
                                     </Link>
                                     <span className='tooltip'>Ver Mais</span>
                                 </a>
-                                <img src={cards.img} alt="Imagem dos produtos mais comprados" />
+                                <img src={p.image} alt="Imagem dos produtos mais comprados" />
                             </div>
                         ))}
                     </div>

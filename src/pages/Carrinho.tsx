@@ -1,4 +1,4 @@
-import React, {useEffect ,useState } from "react";
+import React from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +20,7 @@ import Popup from "../componentes/Popup";
 
 function Carrinho() {
   const navigate = useNavigate();
-  const { carrinho, setCarrinho, subTotal, total, desconto, parcelas, valorParcela, atualizarQuantidade, removerItem, loading } = useCarrinho();
+  const { carrinho, setCarrinho, subTotal, total, desconto, parcelas, valorParcela, atualizarQuantidade, removerItem } = useCarrinho();
 
   //Pop-up
   const [popupConfig, setPopupConfig] = React.useState({

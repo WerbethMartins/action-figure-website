@@ -1,6 +1,19 @@
 import React, { useState } from "react";
-import { validateForm } from "../hooks/useFormValidation"; // Importação das funções de validação
-import { type FormData, type FormErrors } from "../types/formTypes"; // Importação de interfaces
+
+import { Link } from "react-router-dom";
+
+// Navegação
+import { useNavigate } from "react-router-dom"; 
+
+// Importação das funções de validação
+import { validateForm } from "../hooks/useFormValidation";
+
+// Hooks
+import { useAuth } from "../context/AuthContext";
+
+// Interfaces
+import { type FormData, type FormErrors } from "../types/formTypes"; 
+import Footer from "./Footer";
 
 // Define o estado inicial do formulário
 const initialFormData: FormData = {
@@ -16,6 +29,10 @@ function Formulario() {
     const [formData, setFormData] = useState<FormData>(initialFormData);
     const [errors, setErrors] = useState<FormErrors>(initialFormErrors);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [apiError, setApiError] = useState<String | null>(null); // Erro de login
+
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     // Função genérica para lidar com a mudança nos inputs
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,80 +41,109 @@ function Formulario() {
             ...prevData,
             [name]: value,
         }));
+
+        // Limpa o erro de campo enquanto o usuário digita
+        if(errors[name as keyof FormErrors]){
+            setErrors(prev => ({ ...prev, [name]: undefined }));
+        }
     };
 
     // Função para lidar com o envio do formulário
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setApiError(null);
 
-        // 1. Valida os dados atuais
         const validationErrors = validateForm(formData);
-        
-        // 2. Atualiza o state de erros
         setErrors(validationErrors);
 
-        // 3. Verifica se o objeto de erros está vazio
         if (Object.keys(validationErrors).length === 0) {
             setIsSubmitting(true);
-            console.log("Formulário validado com sucesso. Dados:", formData);
             
-            // Simulação de chamada de Envio
-            setTimeout(() => {
-                alert("Formulário enviado com sucesso!");
-                setIsSubmitting(false);
-                setFormData(initialFormData); // Limpa o formulário
-                setErrors(initialFormErrors); // Limpa os erros
-            }, 1000);
+            try {
+                // Simulando a lógica de login com o Context
+                // Aqui é passado os dados para a função criada no AuthContext
+                const sucesso = await login(formData.email, formData.senha);
 
-        } else {
-            console.log("Erros de validação:", validationErrors);
+                if (sucesso != null) {
+                    navigate("/"); // Manda para a Home após logar
+                } else {
+                    setApiError("E-mail ou senha inválidos.");
+                }
+            } catch (error) {
+                setApiError("Ocorreu um erro ao conectar ao servidor.");
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
 
     return (
-        <form className="form-login" onSubmit={handleSubmit}>
-            <h2>Login</h2>
-            
-            <div className="name-section">
-                <label htmlFor="nome">Nome:</label>
-                <input
-                    type="text"
-                    id="nome"
-                    name="nome"
-                    value={formData.nome}
-                    onChange={handleChange}
-                />
-                {errors.nome && <p style={{ color: 'red' }}>{errors.nome}</p>}
-            </div>
+        <>
+            <section className="form-container">
+                <form className="form-login" onSubmit={handleSubmit}>
+                    <h2>Entrar na Animes Actions</h2>
 
-            <div className="email-section">
-                <label htmlFor="email">E-mail:</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                />
-                {errors.email && <p style={{ color: 'red' }}>{errors.email}</p>}
-            </div>
-            
-            <div>
-                <label htmlFor="senha">Senha:</label>
-                <input
-                    type="password"
-                    id="senha"
-                    name="senha"
-                    value={formData.senha}
-                    onChange={handleChange}
-                />
-                {errors.senha && <p style={{ color: 'red' }}>{errors.senha}</p>}
-            </div>
+                    {/* Exibe o erro geral da API se existi */}
+                    {apiError && <p className="error-message-main">{apiError}</p>}
+                    
+                    <div className="input-group">
+                        <label htmlFor="nome">Nome:</label>
+                        <input
+                            type="text"
+                            id="nome"
+                            name="nome"
+                            placeholder="Seu nome completo"
+                            value={formData.nome}
+                            onChange={handleChange}
+                            className={errors.nome ? "input-error" : ""}
+                        />
+                        {errors.nome && <p style={{ color: 'red' }}>{errors.nome}</p>}
+                    </div>
 
-            <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Enviando..." : "Enviar"}
-            </button>
-        </form>
+                    <div className="input-group">
+                        <label htmlFor="email">E-mail:</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="exemplo@email.com"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className={errors.email ? "input-error" : ""}
+                        />
+                        {errors.email && <p style={{ color: 'red' }}>{errors.email}</p>}
+                    </div>
+                    
+                    <div className="input-group">
+                        <label htmlFor="senha">Senha:</label>
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            placeholder="Sua senha"
+                            value={formData.senha}
+                            onChange={handleChange}
+                            className={errors.senha ? "input-error" : ""}
+                        />
+                        {errors.senha && <p style={{ color: 'red' }}>{errors.senha}</p>}
+                    </div>
+
+                    <button className="btn-submit" type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Autenticando..." : "Enviar"}
+                    </button>
+
+                    <div className="ask-account-section">
+                        <Link to={"criar-conta"}>
+                            <p>Não tem cadastro? Criar uma conta!</p>
+                        </Link>
+                    </div>
+                </form>
+            </section>
+
+            <footer style={{width: "100%"}}>
+                <Footer />
+            </footer>
+        </>
     );
 }
 

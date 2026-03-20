@@ -1,8 +1,10 @@
 import { Routes, Route} from 'react-router-dom';
 
+// Hook 
+import { useAuth } from './context/AuthContext';
+
 /* Componentes */
 import SideHeader from "./componentes/SideHeader";
-import Footer from './componentes/Footer';
 
 /* Páginas */
 import Home from "./pages/Home";
@@ -18,6 +20,7 @@ import './App.css'
 
 
 function App() {
+
   return (
     <>
       <main className='main-content'>
