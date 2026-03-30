@@ -17,6 +17,7 @@ import PedidoConcluido from './pages/PedidoConcluido';
 import MeusPedidos from './pages/MeusPedidos';
 import About from './pages/About';
 import CadastrarUsuario from './pages/CadastrarUsuario';
+import AccessDenied  from './componentes/AccessDenied';
 
 import './App.css'
 
@@ -28,6 +29,9 @@ function App() {
       <main className='main-content'>
         <SideHeader />
           <Routes>
+
+            <Route path="/acesso-negado" element={<AccessDenied />} />
+
             {/* Rota Pública */}
             <Route path='/' element={ <Home />} />
             <Route path="/produtos" element={<Produto />} />
@@ -42,8 +46,18 @@ function App() {
                 <Cadastro />
               </RequireRole>
             } />
-            <Route path='/pedido-concluido' element={<PedidoConcluido /> } />
-            <Route path='/pedidos' element={<MeusPedidos /> } />
+
+            {/* Rotas apenas se o usuário estiver logado */}
+            <Route path="/user/pedido-concluido" element={
+              <RequireAuth>
+                <PedidoConcluido />
+              </RequireAuth>
+            } />
+            <Route path="/user/meus-pedidos" element={
+              <RequireAuth>
+                <MeusPedidos />
+              </RequireAuth>
+            } />
           </Routes>
       </main>
     </>

@@ -20,7 +20,7 @@ export function RequireRole({ children, rolePermitida }: RequireRoleProps) {
     }
 
     if(usuario.role !== rolePermitida){
-        return <Navigate to="/login" />
+        return <Navigate to="/acesso-negado"  replace/>
     }
 
     return children;

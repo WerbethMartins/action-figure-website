@@ -22,7 +22,6 @@ function Produto() {
     const { produtos, setProdutos} = useProdutos();
     const [carrinho, setCarrinho] = useState<ICarrinhoItem[]>([]);
     const [produtoEditando, setProdutoEditando] = useState<IProduto | null>(null);
-    const [produtosDestacados, setProdutosDestacados] = useState<number[]>([]);
 
     // Pop-up
     const [popupConfig, setPopupConfig] = React.useState({
@@ -38,20 +37,6 @@ function Produto() {
     };
 
     const [page, setPage] = useState("produtos"); // Controle da seção atual
-
-    function toggleDestaque(id:number){
-
-      setProdutosDestacados((prev)=>{
-
-        if(prev.includes(id)){
-          return prev.filter(item => item !== id)
-        }
-
-        return [...prev,id]
-
-      })
-
-    }
 
     // Carregar produtos da API na inicialização
     useEffect(() => {

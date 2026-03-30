@@ -15,7 +15,15 @@
     padding: 5px;
     max-height: 500px;
 
-    .btn-star {
+    .star-btn {
+      position: absolute;
+      border: none;
+      color: #f12626;
+      font-size: 0.8rem;
+      margin: 5px 10px;
+    }
+
+    .heart-btn {
       position: absolute;
       border: none;
       color: #f12626;

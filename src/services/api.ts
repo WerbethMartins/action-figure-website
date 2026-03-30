@@ -11,6 +11,38 @@ export interface ICarrinhoItem  {
 
 const API_URL = "http://localhost:3000";
 
+// ===== Destaques e Favoritos ===== 
+
+// Alterna destaque do produto
+export async function toggleDestaqueProduto(produto: IProduto): Promise<IProduto> {
+  const response = await fetch(`${API_URL}/produtos/${produto.id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      destaque: !produto.destaque
+    })
+  });
+
+  if (!response.ok) throw new Error("Erro ao atualizar destaque");
+
+  return await response.json();
+}
+
+// Função para alternar o status de favorito do produto
+export async function toggleFavoritoProduto(produto: IProduto): Promise<IProduto> {
+  const response = await fetch(`${API_URL}/produtos/${produto.id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      favorito: !produto.favorito
+    })
+  }); 
+
+  if(!response.ok) throw new Error("Erro ao atualizar favorito");
+
+  return await response.json();
+}
+
 // ===== PRODUTOS =====
 export async function listarProdutos(): Promise<IProduto[]> {
     const response = await fetch(`${API_URL}/produtos`);
@@ -43,20 +75,6 @@ export async function removerProdutoAPI(id: number): Promise<void> {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Erro ao remover produto da API");
-}
-
-export async function toggleDestaqueProduto(produto: IProduto): Promise<IProduto> {
-  const response = await fetch(`${API_URL}/produtos/${produto.id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      destaque: !produto.destaque
-    })
-  });
-
-  if (!response.ok) throw new Error("Erro ao atualizar destaque");
-
-  return await response.json();
 }
 
 // ===== CARRINHO =====
@@ -97,7 +115,6 @@ export async function listarCarrinhoCompleto() {
 }
 
 // ===== CHECKOUT ===== 
-
 export async function criarPedido(pedido: IPedido){
   const response = await fetch(`${API_URL}/pedidos`, {
     method: "POST",
@@ -159,9 +176,8 @@ export async function removerDoCarrinho(id: number): Promise<void> {
 }
 
 // ===== PEDIDOS =====
-export async function listarPedidos(): Promise<IPedido[]> {
-  const response = await fetch(`${API_URL}/pedidos`);
-
+export async function listarPedidosPorUsuario(email: string): Promise<IPedido[]> {
+  const response = await fetch(`${API_URL}/pedidos/clienteEmail=${email}`);
   if(!response.ok){
     throw new Error("Erro ao listar pedidos");
   }

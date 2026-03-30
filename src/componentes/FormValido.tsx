@@ -99,7 +99,7 @@ function Formulario() {
                 <form className="form-login" onSubmit={handleSubmit}>
                     <h2>Entrar na Animes Actions</h2>
 
-                    {/* Exibe o erro geral da API se existi */}
+                    {/* Exibe o erro geral da API se existir */}
                     {apiError && <p className="error-message-main">{apiError}</p>}
                     
                     <div className="input-group">

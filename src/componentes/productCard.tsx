@@ -1,19 +1,29 @@
 import React from "react";
-import type { IProduto } from "../interface/produto-interface";
+
+// Context
+import { useAuth } from "../context/AuthContext";
+
+// Pop-up
 import Popup from "./Popup";
 
-import { toggleDestaqueProduto } from "../services/api"; 
+// Interface
+import type { IProduto } from "../interface/produto-interface";
+
+// Services
+import { toggleDestaqueProduto, toggleFavoritoProduto } from "../services/api"; 
 
 // Interface para as props do Card, estendendo IProduto e adicionando funções opcionais para ações
 interface cardProps extends IProduto {
     onAddCarrinho?: (produto: IProduto) => void;
     onRemoveProduto?: (id: number) => void;
     onEditarProduto?: (produto: IProduto) => void;
-
     destaque?: boolean;
+    favorito?: boolean;
 }
 
-function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProduto, onEditarProduto, destaque }: cardProps) {
+function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProduto, onEditarProduto, destaque, favorito }: cardProps) {
+
+    const {usuario} = useAuth();
 
     // Pop-up
     const [popupConfig, setPopupConfig] = React.useState({
@@ -70,16 +80,43 @@ function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProd
         }
     }
 
+    async function handleToggleFavorite() {
+        try {
+            await toggleFavoritoProduto({
+                id,
+                nome,
+                description,
+                price, 
+                image, 
+                favorito
+            });
+
+            exibirMensagem("Produto favoritado!", "sucesso");
+        }catch{
+            exibirMensagem("erro ao favoritar o produto", "erro");
+        }
+    }
+
     return (
          <>      
             <div className="card">
                 <div className="card-header">
-                    <button
-                        className="btn-star"
+                    {usuario?.role === 'admin' && (
+                        <button
+                        className="star-btn"
                         onClick={() => handleToggleDestaque()}
                     >
                         {destaque ? "⭐" : "☆"}
                     </button>
+                    )}
+                    {usuario && (
+                        <button
+                            className="heart-btn"
+                            onClick={() => handleToggleFavorite()}
+                        >
+                            {favorito ? "❤️" : "🤍"}
+                        </button>
+                    )}
                     <img src={image} />
                 </div>
 

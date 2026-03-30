@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 
+// Context
+import { useAuth } from "../context/AuthContext";
+
 // Api
-import { listarPedidos, listarProdutos } from "../services/api";
+import { listarPedidosPorUsuario, listarProdutos } from "../services/api";
 
 // Interfaces
 import type { IPedido } from "../interface/pedidoInterface";
@@ -12,6 +15,7 @@ import defaultImage from "../assets/img/commercial.png";
 import Footer from "../componentes/Footer";
 
 function MeusPedidos(){
+    const {usuario} = useAuth();
     const [pedidos, setPedidos] = useState<IPedido[]>([]);
     const [produtos, setProdutos] = useState<IProduto[]>([]);
     const [paginaAtual, setPaginaAtual] = useState(1);
@@ -23,13 +27,18 @@ function MeusPedidos(){
         async function carregarDados() {
             try {
                 const [pedidosData, produtosData] = await Promise.all([
-                    listarPedidos(),
+                    listarPedidosPorUsuario(usuario?.email || ""),
                     listarProdutos()
                 ]);
 
+                // Filtrando os pedidos por usuário
+                const meusPedidos = pedidosData.filter(
+                    (pedido: IPedido) => pedido.clienteEmail === usuario?.email
+                )
+
                 console.log("Pedidos:", pedidos);
                 console.log("Produtos:", produtos);
-                setPedidos(pedidosData);
+                setPedidos(meusPedidos);
                 setProdutos(produtosData);
 
             } catch (error) {
@@ -39,8 +48,8 @@ function MeusPedidos(){
             }
         }
 
-        carregarDados();
-    }, []);
+        if(usuario) carregarDados(); // Só carrega se houver usuário
+    }, [usuario]);
 
     if(loading) {
         return <p>Carregando pedidos...</p>;
@@ -51,11 +60,26 @@ function MeusPedidos(){
     const indiceUltimoItem = paginaAtual * itemsPorPagina;
     const indicePrimeiroItem = indiceUltimoItem - itemsPorPagina;
 
-    // Filtra os pedidos para exibir apenas os do cliente logado (supondo que temos o ID do cliente)
+    // Filtra os pedidos para exibir apenas os do cliente logado
     const pedidosPagina = pedidos.slice(indicePrimeiroItem, indiceUltimoItem);
 
     // Calcula o total de páginas
     const totalPaginas = Math.ceil(pedidos.length / itemsPorPagina);
+
+    // Se não houver pedidos, botões de navegação ficam desabilitados
+    if (pedidos.length === 0) {
+        return (
+            <>
+                <div className="orders-container">
+                    <h1 style={{ fontSize: "40px" }}>📦 Meus Pedidos</h1>
+                    <p>Você ainda não realizou nenhum pedido.</p>
+                </div>
+                <footer style={{width: "100%"}}>
+                    <Footer />
+                </footer>
+            </>
+        );
+    }
 
     return (
         <>

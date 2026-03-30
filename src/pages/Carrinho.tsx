@@ -1,6 +1,10 @@
 import React from "react";
 
+// Navigate
 import { useNavigate } from "react-router-dom";
+
+// Context
+import { useAuth } from "../context/AuthContext";
 
 // API
 import { criarPedido, limpaCarrinho } from "../services/api";
@@ -21,7 +25,7 @@ import Popup from "../componentes/Popup";
 function Carrinho() {
   const navigate = useNavigate();
   const { carrinho, setCarrinho, subTotal, total, desconto, parcelas, valorParcela, atualizarQuantidade, removerItem } = useCarrinho();
-
+  const { usuario } = useAuth();
   //Pop-up
   const [popupConfig, setPopupConfig] = React.useState({
     visivel: false,
@@ -55,10 +59,17 @@ function Carrinho() {
 
       return;
     }
+
+    if (!usuario) {
+      exibirMensagem("Faça login para finalizar seu pedido!", 'erro');
+      navigate("/entrar");
+      return;
+    }
     try {
       // Montar o objeto do pedido
       const pedido: IPedido = {
         data: new Date().toISOString(),
+        clienteEmail: usuario.email,
         itens: carrinho.map((item) => ({
           id: item.id,
           produtoId: item.produto.id,
@@ -85,7 +96,7 @@ function Carrinho() {
       exibirMensagem("Pedido finalizado com sucesso! 🎉", 'sucesso');
 
       //Redireciona página de Pedidos Concluido ao finalizar a compra
-      navigate("/pedido-concluido", {
+      navigate("/user/pedido-concluido", {
         state: { pedido }
       });
     

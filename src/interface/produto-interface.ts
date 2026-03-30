@@ -5,4 +5,5 @@ export interface IProduto {
     description: string;
     price: number;
     destaque?: boolean;
+    favorito?: boolean;
 }
