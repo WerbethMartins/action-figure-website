@@ -1,4 +1,3 @@
-import React from 'react';
 
 export interface UserData {
     id: string;
@@ -18,6 +17,3 @@ export interface UserContextType {
     // Ela não recebe argumentos e não retorna nada (void)
     signOut: () => void;
 }
-
-// Criação do contexto com o valor padrão
-const userContext = React.createContext<UserContextType | undefined>(undefined);

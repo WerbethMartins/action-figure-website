@@ -15,14 +15,6 @@ function ModalEditarProduto({ produto, onClose, onProdutoAtualizado }: ModalEdit
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
 
-    // Pop-up
-    const [popupConfig, setPopupConfig] = React.useState({
-        visivel: false,
-        mensagem: '',
-        tipo: '' as 'sucesso' | 'erro' | ''
-    });
-
-
     useEffect(() => {
         if (produto) {
             setNome(String(produto.nome));
@@ -44,6 +36,7 @@ function ModalEditarProduto({ produto, onClose, onProdutoAtualizado }: ModalEdit
             description,
             price: parseFloat(price),
             image: produto.image,
+            thumbnails: produto.thumbnails,
         };
 
         try {

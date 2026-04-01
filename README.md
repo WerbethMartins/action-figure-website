@@ -2,7 +2,7 @@
 ![React](https://img.shields.io/badge/React-20232a?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)
-![API Status](https://img.shields.io/badge/API_Fake-Port_3000-00bfff?style=flat&logo=json-webtokens&logoColor=white)
+![JSON-Server](https://img.shields.io/badge/JSON--Server-000?style=for-the-badge&logo=json&logoColor=white)
 
 # ⛩️ Animes Actions.F 
 

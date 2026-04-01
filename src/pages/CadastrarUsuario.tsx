@@ -15,7 +15,6 @@ import Footer from "../componentes/Footer";
 
 function CadastrarUsuario() {
     const [errors, setErrors] = useState<any>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
     const { cadastrar, loading } = useAuth(); // Função que vamos adicionar no Context
     const navigate = useNavigate();
@@ -63,7 +62,6 @@ function CadastrarUsuario() {
         setErrors(validationErrors);
 
         if (Object.keys(validationErrors).length === 0) {
-            setIsSubmitting(true);
             try {
                 // Aqui chamamos a lógica de cadastro (Firebase/API)
                 const sucesso = await cadastrar(formData.email, formData.senha, formData.nome);
@@ -76,7 +74,8 @@ function CadastrarUsuario() {
             } catch (err: any) {
                 setApiError(err.message || "Erro ao criar conta. Tente novamente mais tarde.");
             } finally {
-                setIsSubmitting(false);
+                // Limpa erros anteriores ao tentar novamente
+                setErrors({});
             }
         }
     };

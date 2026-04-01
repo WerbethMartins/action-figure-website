@@ -27,21 +27,6 @@ function ListaProdutos() {
         fetchProdutos();
     }, []);
 
-    async function adicionarProduto(novoProduto: IProduto) {
-        try {
-            const response = await fetch("http://localhost:3000/produtos", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(novoProduto),
-            });
-            if (!response.ok) throw new Error("Erro ao salvar produto");
-            const produtoSalvo = await response.json();
-            setProdutos((prev) => [...prev, produtoSalvo]);
-        } catch (err) {
-            alert((err as Error).message);
-        }
-    }
-
     if (loading) return <p>Carregando produtos...</p>;
     if (error) return <p>{error}</p>;
 

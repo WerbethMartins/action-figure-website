@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useState } from "react";
 
 // Componentes
 import Footer from "../componentes/Footer";
@@ -7,7 +7,7 @@ import Footer from "../componentes/Footer";
 import wallpaper from "../assets/img/business-wallpaper.jpg";
 
 function About(){
-    const [loading, setLoading] = useState(true);
+    const [loading] = useState(true);
 
     if(!loading) return <p>Carregando a página...</p>
 

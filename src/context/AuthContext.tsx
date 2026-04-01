@@ -4,10 +4,6 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { loginUsuario } from '../services/api';
 import { cadastrarUsuario } from '../services/api';
 
-// Navigation
-import { useNavigate } from 'react-router-dom';
-
-
 interface Usuario {
   nome: string;
   email: string;
@@ -28,8 +24,6 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [usuario, setUsuario] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
 
   // Ao carregar o app, verifica se já tem alguém salvo no navegador
   useEffect(() => {

@@ -13,10 +13,11 @@ import type { IProduto } from "../interface/produto-interface";
 import { toggleDestaqueProduto, toggleFavoritoProduto } from "../services/api"; 
 
 // Interface para as props do Card, estendendo IProduto e adicionando funções opcionais para ações
-interface cardProps extends IProduto {
+interface cardProps extends Omit<IProduto, 'thumbnails'> {
     onAddCarrinho?: (produto: IProduto) => void;
     onRemoveProduto?: (id: number) => void;
     onEditarProduto?: (produto: IProduto) => void;
+    thumbnails?: string[]; // Adicionando a propriedade thumbnails
     destaque?: boolean;
     favorito?: boolean;
 }
@@ -41,7 +42,7 @@ function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProd
     // Função para lidar com a adição ao carrinho
     function handleAdd(){
         if(onAddCarrinho) {
-            onAddCarrinho({ id, image, nome, price, description, thumbnails });
+            onAddCarrinho({ id, image, nome, price, description, thumbnails: thumbnails || [] });
             exibirMensagem("Produto adicionado ao carrinho!", "sucesso");
         }
     }
@@ -49,7 +50,7 @@ function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProd
     // Função para lidar com a edição do produto
     function handleUpdate(){
         if(onEditarProduto){
-            onEditarProduto({ id, image, nome, price, description,thumbnails });
+            onEditarProduto({ id, image, nome, price, description, thumbnails: thumbnails || [] });
             exibirMensagem("Produto carregado para edição!", "sucesso");
         }
     }
@@ -70,7 +71,7 @@ function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProd
                 description,
                 price,
                 image,
-                thumbnails,
+                thumbnails: thumbnails || [],
                 destaque
             });
 
@@ -89,7 +90,7 @@ function Card({ image, nome, price, description, id, onAddCarrinho, onRemoveProd
                 description,
                 price, 
                 image, 
-                thumbnails,
+                thumbnails: thumbnails || [],
                 favorito
             });
 
