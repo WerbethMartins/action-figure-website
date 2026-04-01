@@ -62,7 +62,13 @@
       "favorito": true
     }
   ],
-  "carrinho": [],
+  "carrinho": [
+    {
+      "id": "1772668254442",
+      "produtoId": "1772668254442",
+      "quantidade": 1
+    }
+  ],
   "pedidos": [
     {
       "id": "b9ed",
