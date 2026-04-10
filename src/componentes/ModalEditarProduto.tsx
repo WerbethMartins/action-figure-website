@@ -40,7 +40,7 @@ function ModalEditarProduto({ produto, onClose, onProdutoAtualizado }: ModalEdit
         };
 
         try {
-            const atualizado = await atualizarProdutoAPI(produto?.id, produtoAtualizado);
+            const atualizado = await atualizarProdutoAPI(produtoAtualizado);
             onProdutoAtualizado(atualizado);
             onClose();
         }catch(error){
