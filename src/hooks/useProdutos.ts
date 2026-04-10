@@ -28,7 +28,7 @@ export function useProdutos() {
 
     async function atualizarProduto(id: number, produto: IProduto){
         try {
-            const produtoAtualizado = await atualizarProdutoAPI(id, produto);
+            const produtoAtualizado = await atualizarProdutoAPI(produto);
             setProdutos(prev => prev.map(p => p.id === id ? produtoAtualizado : p));
         } catch (error) {
             console.error("Erro ao atualizar produto", error);
@@ -37,7 +37,7 @@ export function useProdutos() {
 
     async function removerProduto(id: number){
         try {
-            await removerProdutoAPI(id);
+            await removerProdutoAPI();
             setProdutos(prev => prev.filter(p => p.id !== id));
             // Alternativa sem refazer a lista completa:    
             setProdutos(prev => {
