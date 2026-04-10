@@ -67,3 +67,51 @@
     }
 }
 
+/* Estilos para telas menores (Tablets e Celulares) */
+@media (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: calc(100% - 20px);
+        height: auto; 
+        min-height: 40vh;
+        gap: 20px;
+        padding: 30px 15px; 
+
+        & .footer__content,
+        & .footer__tools-informations,  
+        & .footer__social-media {
+            align-items: center;
+            text-align: center;
+            width: 100%;
+
+            p {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Transformando o divisor vertical em horizontal */
+        & .footer__divisor {
+            width: 80%; /* Não ocupa a largura toda  */
+            height: 1px; /* Espessura da linha deitada */
+            background-color: rgba(255, 255, 255, 0.5);
+            margin: 5px 0;
+        }
+
+        & .footer__social-media .social-media__icons {
+            justify-content: center; /* Garante ícones centrados */
+            
+            & img {
+                width: 35px; /* Ícones um pouco menores no mobile evitam poluição */
+                height: 35px;
+            }
+        }
+        
+        & .footer__tools-informations .tools-information__list {
+            margin: 0; 
+            list-style: none; /* Garante que não tenha bolinhas deslocadas */
+            padding: 0;
+        }
+    }
+}

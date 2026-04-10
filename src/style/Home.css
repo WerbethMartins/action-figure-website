@@ -1,4 +1,3 @@
-
 .home {
     display: flex;
     flex-direction: column;
@@ -278,5 +277,85 @@
         opacity: 1;
         display: flex;
         max-height: 1000px; /* Um valor alto o suficiente para mostrar o conteúdo */
+    }
+}
+
+/* Estilos para telas menores (Tablets e Celulares) */
+@media (max-width: 768px) {
+    .home {
+        width: 100%; /* Garante que não passe da tela */
+        padding: 0 10px; /* Margem interna para o conteúdo não colar na borda */
+
+        & .header-home {
+            flex-direction: column; /* Logo e busca ficam um embaixo do outro */
+            align-items: center;
+            text-align: center;
+            gap: 15px;
+
+            & .user-info-header {
+                flex-direction: row; /* Talvez manter os ícones lado a lado? */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+        }
+
+        & .home__initial-section {
+            flex-direction: column-reverse; /* Reverse coloca a imagem primeiro se ela vier depois no HTML */
+            align-items: center;
+            text-align: center;
+            padding-bottom: 10px;
+
+            & .initial-section__title  {
+                margin: 0 40px;
+                width: 70%;
+
+                & .title {
+                    font-size: 1rem;
+                    margin-right: 10px;
+                }
+
+                & .initial-section__button {
+                    margin-top: 10px;
+                }
+            }
+
+            & .img-home {
+                width: 100%;
+                max-width: 400px; /* max-width para evitar que a imagem fique gigante em tablets */
+                height: auto;
+            }
+        }
+
+        & .home__apresentations-cards .apresentation-cards__container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+
+            & .a-cards {
+                width: 80%; /* Ocupar a largura disponível */
+                max-width: 320px; /* Mas não esticar demais */
+                margin-bottom: 10px;
+            }
+        }
+
+        & .most-purchased-section .most-purchased-section__container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            & .most-purchased-cards {
+                width: 100%;
+                
+                & img {
+                    width: 100%;
+                    max-width: 250px; /* Mantém o tamanho do action figure controlado */
+                    height: auto;
+                    display: block;
+                    margin: 0 auto;
+                }
+            }
+        }
     }
 }

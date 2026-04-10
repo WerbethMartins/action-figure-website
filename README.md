@@ -62,6 +62,10 @@ Diferente de soluções externas, a autenticação deste projeto foi construída
   ```bash
   npm run dev
 
+🚀 Deploy (Vercel)
+
+Para o deploy na Vercel, utilizei uma estratégia de Mock Data para a listagem de produtos, enquanto a persistência de Carrinho, Usuário e Pedidos é gerenciada via Web Storage (LocalStorage), garantindo que a aplicação seja totalmente funcional mesmo sem um backend persistente externo.
+
 Desenvolvido por [Werbeth Martins Sousa](https://www.linkedin.com/in/werbeth-sousa-608428185/) - 2026 🚀
 
 🧠 Aprendizados e Desafios Superados

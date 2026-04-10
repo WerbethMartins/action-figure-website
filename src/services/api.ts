@@ -1,5 +1,6 @@
 import type { IPedido } from "../interface/pedidoInterface";
 import type { IProduto } from "../interface/produto-interface";
+import { PRODUTOS_MOCK } from "../datas/MockDatas";
 
 
 // Tipo do item no carrinho 
@@ -9,244 +10,145 @@ export interface ICarrinhoItem  {
     quantidade: number;
 }
 
-const API_URL = "http://localhost:3000";
+// Chaves para o o localStorage
+const STORAGE_KEYS = {
+  CARRINHO: "@AnimesActions:carrinho",
+  PEDIDOS: "@AnimesActions:pedidos",
+  USUARIOS: "@AnimesActions:usuarios"
+}
+
+// Simula atraso de red para manter os loadins
+const delay = (ms = 500) => new Promise(resolve => setTimeout(resolve, ms)); 
 
 // ===== Destaques e Favoritos ===== 
 
 // Alterna destaque do produto
-export async function toggleDestaqueProduto(produto: IProduto): Promise<IProduto> {
-  const response = await fetch(`${API_URL}/produtos/${produto.id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      destaque: !produto.destaque
-    })
-  });
-
-  if (!response.ok) throw new Error("Erro ao atualizar destaque");
-
-  return await response.json();
-}
+export async function toggleDestaqueProduto(produto: IProduto): Promise<IProduto>{
+  return { ...produto, destaque: !produto.destaque};
+} 
 
 // Função para alternar o status de favorito do produto
-export async function toggleFavoritoProduto(produto: IProduto): Promise<IProduto> {
-  const response = await fetch(`${API_URL}/produtos/${produto.id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      favorito: !produto.favorito
-    })
-  }); 
-
-  if(!response.ok) throw new Error("Erro ao atualizar favorito");
-
-  return await response.json();
+export async function toggleFavoritoProduto(produto: IProduto): Promise<IProduto>{
+  return {...produto, favorito: !produto.favorito};
 }
 
 // ===== PRODUTOS =====
 export async function listarProdutos(): Promise<IProduto[]> {
-    const response = await fetch(`${API_URL}/produtos`);
-    if (!response.ok) throw new Error("Erro ao listar produtos");
-    return await response.json();
+    await delay();
+    return PRODUTOS_MOCK;
 }
 
+// Funções Placeholder para evitar erros de importação em outros componentes
 export async function adicionarProdutoAPI(produto: IProduto): Promise<IProduto> {
-  const response = await fetch(`${API_URL}/produtos`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(produto),
-  });
-  if (!response.ok) throw new Error("Erro ao salvar produto na API");
-  return await response.json();
+    console.warn("Função adicionarProdutoAPI desativada no modo Mock/Deploy");
+    return produto;
 }
 
-export async function atualizarProdutoAPI(id: number, produto: IProduto): Promise<IProduto> {
-  const response = await fetch(`${API_URL}/produtos/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(produto),
-  });
-  if (!response.ok) throw new Error("Erro ao atualizar produto na API");
-  return await response.json();
+export async function atualizarProdutoAPI(produto: IProduto): Promise<IProduto> {
+    console.warn("Função atualizarProdutoAPI desativada no modo Mock/Deploy");
+    return produto;
 }
 
-export async function removerProdutoAPI(id: number): Promise<void> {
-  const response = await fetch(`${API_URL}/produtos/${id}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) throw new Error("Erro ao remover produto da API");
+export async function removerProdutoAPI(): Promise<void> {
+    console.warn("Função removerProdutoAPI desativada no modo Mock/Deploy");
 }
 
 // ===== CARRINHO =====
 
+export async function listarCarrinho(): Promise<ICarrinhoItem[]> {
+  const dados = localStorage.getItem(STORAGE_KEYS.CARRINHO);
+  return dados ? JSON.parse(dados) : [];
+}
+
+export async function adicionarAoCarrinho(item: ICarrinhoItem): Promise<ICarrinhoItem> {
+  const carrinho = await listarCarrinho();
+  const indexExistente = carrinho.findIndex(c => c.produtoId === item.produtoId);
+  
+  if (indexExistente !== -1) {
+        carrinho[indexExistente].quantidade += item.quantidade;
+    } else {
+        carrinho.push({ ...item, id: Date.now() }); // Gera um ID único simples
+    }
+
+    localStorage.setItem(STORAGE_KEYS.CARRINHO, JSON.stringify(carrinho));
+    return item;
+}
+
 // Atualiza quantidade no carrinho
 export async function atualizarQuantidadeCarrinho(id: number | string, quantidade: number) {
   // Garantindo que o ID seja uma string limpa para a URL
-  const idFormatado = String(id);
+  const carrinho = await listarCarrinho();
+  const novoCarrinho = carrinho.map(item => 
+    item.id === Number(id) ? { ...item, quantidade } : item
+  );
 
-  const response = await fetch(`${API_URL}/carrinho/${idFormatado}`,{
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ quantidade })
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text(); // Lê o "Not Found" como texto plano
-    console.error("Resposta do servidor:", errorText);
-    throw new Error(`Erro ${response.status}: Não foi possível localizar o item ${id} no carrinho.`);
-  }
-
-  return response.json();
+  localStorage.setItem(STORAGE_KEYS.CARRINHO, JSON.stringify(novoCarrinho));
+  return { id, quantidade };
 }
 
-export async function listarCarrinho(): Promise<ICarrinhoItem[]> {
-    const response = await fetch(`${API_URL}/carrinho`);
-    return await response.json();
+export async function removerDoCarrinho(id: number): Promise<void> {
+  const carrinho = await listarCarrinho();
+  const novocarrinho = carrinho.filter(item => item.id !== id);
+  localStorage.setItem(STORAGE_KEYS.CARRINHO, JSON.stringify(novocarrinho))
 }
 
 // Lista carrinho e já retorna itens completos com dados do produto
 export async function listarCarrinhoCompleto() {
   const [produtos, carrinho] = await Promise.all([
-    listarProdutos(),
-    listarCarrinho()
-  ]);
+        listarProdutos(),
+        listarCarrinho()
+    ]);
 
-  return carrinho.map(item => {
-    const produto = produtos.find(p => p.id === item.produtoId);
+    return carrinho.map(item => ({
+        ...item,
+        produto: produtos.find(p => p.id === item.produtoId),
+    }));
+}
 
-    return {
-      ...item,
-      produto, // adiciona o objeto completo do produto
-    };
-  });
+export async function limpaCarrinho(){
+  localStorage.removeItem(STORAGE_KEYS.CARRINHO);
 }
 
 // ===== CHECKOUT ===== 
 export async function criarPedido(pedido: IPedido){
-  const response = await fetch(`${API_URL}/pedidos`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
-    },
-    body: JSON.stringify(pedido)
-  });
-
-  if (!response.ok) {
-    throw new Error("Erro ao criar pedido");
-  }
-
-  return response.json();
-}
-
-export async function limpaCarrinho(){
-  const response = await fetch("http://localhost:3000/carrinho");
-  
-  if(!response.ok){
-    throw new Error("Erro ao buscar carrinho!");
-  }
-
-  const itens = await response.json();
-
-  await Promise.all(
-    itens.map((item: any) => {
-      fetch(`${API_URL}/carrinho/${item.id}`, {
-        method: "DELETE"
-      })
-    })
-  );
-}
-
-export async function adicionarAoCarrinho(
-  item: ICarrinhoItem
-): Promise<ICarrinhoItem> {
-  const response = await fetch(`${API_URL}/carrinho`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(item)
-  });
-
-  if (!response.ok) {
-    throw new Error("Erro ao adicionar ao carrinho");
-  }
-
-  return response.json();
-}
-
-export async function removerDoCarrinho(id: number): Promise<void> {
-  const response = await fetch(`${API_URL}/carrinho/${id}`, {
-    method: "DELETE"
-  });
-
-  if (!response.ok) {
-    throw new Error("Erro ao remover item do carrinho");
-  }
+  await delay(800);
+  const pedidos = JSON.parse(localStorage.getItem(STORAGE_KEYS.PEDIDOS) || "[]");
+  pedidos.push({...pedido, id: Date.now() });
+  localStorage.setItem(STORAGE_KEYS.PEDIDOS, JSON.stringify(pedidos));
+  await limpaCarrinho();
+  return pedido;
 }
 
 // ===== PEDIDOS =====
 export async function listarPedidosPorUsuario(email: string): Promise<IPedido[]> {
-  const response = await fetch(`${API_URL}/pedidos?clienteEmail=${email}`);
-  if(!response.ok){
-    throw new Error("Erro ao listar pedidos");
-  }
-
-  return await response.json();
+    const pedidos = JSON.parse(localStorage.getItem(STORAGE_KEYS.PEDIDOS) || "[]");
+    return pedidos.filter((p: IPedido) => p.clienteEmail === email);
 }
 
 // ===== USUÁRIOS E AUTENTICAÇÃO =====
 export async function loginUsuario(email: string, senha: string) {
-  
-  await new Promise(resolve => setTimeout(resolve, 2000)); // Simula atraso de rede
-  const response = await fetch(`${API_URL}/usuarios?email=${email}`);
-  
-  if (!response.ok) throw new Error("Erro ao conectar com o servidor");
-  
-  const usuarios = await response.json();
-  
-  // O json-server retorna um array. Se estiver vazio, as credenciais estão incorretas.
-  if (usuarios.length === 0) {
-    throw new Error("E-mail não encontrado");
-  }
-  
-  const usuarioEncontrado = usuarios[0]; // Retorna o usuário encontrado
-   
-   if (usuarioEncontrado.senha !== senha) {
-    throw new Error("Senha incorreta");
-  }
-  
+  await delay(1000);
+  const usuarios = JSON.parse(localStorage.getItem(STORAGE_KEYS.USUARIOS) || "[]");
+  const usuarioEncontrado = usuarios.find((u: any) => u.email === email);
+
+  if (!usuarioEncontrado) throw new Error("E-mail não encontrado");
+  if (usuarioEncontrado.senha !== senha) throw new Error("Senha incorreta");
+
   const { senha: _, ...userWithoutPassword } = usuarioEncontrado;
   return userWithoutPassword;
 
 }
 
 export async function cadastrarUsuario(dados: any) {
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  // Verifica se o email já existe antes de cadastrar
-  const checkResponse = await fetch(`${API_URL}/usuarios?email=${dados.email}`);
-  
-  if (!checkResponse.ok) {
-    // Se der 404 aqui, o problema é a URL ou o nome da tabela no db.json
-    throw new Error(`Servidor não encontrou a rota /usuarios (Status ${checkResponse.status})`);
-  }
-  
-  const existing = await checkResponse.json();
-  
-  if (existing.length > 0) {
+  await delay(1000);
+  const usuarios = JSON.parse(localStorage.getItem(STORAGE_KEYS.USUARIOS) || "[]");
+
+  if(usuarios.find((u: any) => u.email === dados.email)){
     throw new Error("Este e-mail já está cadastrado");
   }
 
-  const response = await fetch(`${API_URL}/usuarios`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dados),
-  });
+  usuarios.push(dados);
+  localStorage.setItem(STORAGE_KEYS.USUARIOS, JSON.stringify(usuarios));
 
-  if(!response.ok) {
-    const textoErro = await response.text();
-    console.error("O servidor respondeu com um erro:", response.status, textoErro);
-    throw new Error(`Erro ${response.status}: ${textoErro}`);
-  }
-
-  return await response.json();
+  return dados;
 }
