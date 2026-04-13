@@ -46,21 +46,23 @@ Diferente de soluções externas, a autenticação deste projeto foi construída
 
 📦 Como rodar o projeto
 
-1. Clone o repositório:
+1. **Clone o repositório:** 
   ```bash
-  git clone https://github.com/seu-usuario/animes-actions.git 
+    git clone https://github.com/seu-usuario/animes-actions.git 
 
-2. Instale as dependências:
-  ```bash
-  npm install
+2. **Instale as dependências:**
 
-3. Inicie a API Fake (JSON Server):
   ```bash
-  npx json-server --watch db.json --port 3000
 
-4. Inicie a aplicação
+    npm install
+
+3. **Inicie a API Fake (JSON Server):**
   ```bash
-  npm run dev
+    npx json-server --watch db.json --port 3000
+
+4. **Inicie a aplicação**
+  ```bash
+    npm run dev
 
 🚀 Deploy (Vercel)
 
